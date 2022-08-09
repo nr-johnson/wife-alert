@@ -1,0 +1,24 @@
+{
+  "name": "alert-app",
+  "version": "1.0.0",
+  "description": "App to communicate between two machines",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nr-johnson/alert-app.git"
+  },
+  "author": "NRJohnson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nr-johnson/alert-app/issues"
+  },
+  "homepage": "https://github.com/nr-johnson/alert-app#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "socket.io": "^4.5.1"
+  }
+}
