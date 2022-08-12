@@ -1,16 +1,33 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(http-equiv="X-UA-Compatible", content="IE=edge")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Document
+extends layout.pug 
 
-        link(rel="stylesheet", href="/style.css")
-        
-        script(defer src="http://localhost:8000/socket.io/socket.io.js")
-        script(defer src='/script.js')
-    body
-        h1 Dont press the big red button!
-        form(action="" onsubmit='sendMessage(event, this)')
-            button(type='submit' id='bigRedButton')
+block head 
+    title Home
+
+
+block content
+    main#homeMain(class='container-fluid')
+        aside#customForm 
+            div(class='back')
+            form(onsubmit="sendCustomMessage(event, this.children[0])")
+                textarea#customText(name=message)
+                div(class='row w-100 mx-auto p-0 justify-content-between')
+                    div(class='col-3 p-0')
+                        button(class='cancel' onclick='toggleCustomMessage(false); return false') Cancel
+                    div(class='col-3 p-0')
+                        button(type='submit') Send
+        section#customBtnCont
+            div#customBtn(class='customBtn' onclick='toggleCustomMessage(true)')
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="currentColor" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
+                    <path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                </svg>
+        ul#buttonsCont(class='row justify-content-center w-100')
+            li(class='btn btn-low col-4')
+                span(class='alert-btn'  data-level='1')
+            li(class='btn btn-mid col-4')
+                span(class='alert-btn' data-level='2')
+            li(class='btn btn-high col-4 mx-auto')
+                span(class='alert-btn' data-level='3')
+            li(class='btn btn-urg col-4')
+                span(class='alert-btn' data-level='4')
+                
+        section#homeMessage(class='homeMsg')

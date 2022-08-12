@@ -1,15 +1,10 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+extends layout.pug 
 
-        link(rel="stylesheet", href="/style.css")
+block head 
+    title Cave        
 
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        script(defer src="http://localhost:8000/socket.io/socket.io.js")
-        script(defer src='/script.js')
-        title Document
-    body 
-        main#message
+block content
+    main#message
+
+    audio#wifeAlert(src="/sounds/wife.mp3") 
         
