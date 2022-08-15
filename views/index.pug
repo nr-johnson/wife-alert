@@ -6,6 +6,7 @@ block head
 
 block content
     main#homeMain(class='container-fluid')
+        section#homeMessage(class='homeMsg')
         aside#customForm 
             div(class='back')
             form(onsubmit="sendCustomMessage(event, this.children[0])")
@@ -25,9 +26,7 @@ block content
                 span(class='alert-btn'  data-level='1')
             li(class='btn btn-mid col-4')
                 span(class='alert-btn' data-level='2')
-            li(class='btn btn-high col-4 mx-auto')
+            li(class='btn btn-high col-4')
                 span(class='alert-btn' data-level='3')
             li(class='btn btn-urg col-4')
                 span(class='alert-btn' data-level='4')
-                
-        section#homeMessage(class='homeMsg')
