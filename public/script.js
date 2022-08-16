@@ -65,6 +65,7 @@ socket.on('alert', data => {
             sound.pause()
             sound.currentTime = 0
             window.removeEventListener('keypress', () => {})
+            message.innerHTML = ''
         })
 
         ping = window.setInterval(() => {
@@ -73,7 +74,7 @@ socket.on('alert', data => {
     }
 })
 
-// Displays message to home page when the cave page send received "receipt"
+// Displays message to home page when the cave page sends the received "receipt"
 let timeout
 let rep
 socket.on('response', data => {
