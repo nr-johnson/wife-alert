@@ -44,7 +44,14 @@ io.on('connection', socket => {
   })
 
   socket.on('received', data => {
-    socket.broadcast.to(data.to).emit('response', {message: `Level ${data.level} alert delivered!`})
+    socket.broadcast.to(data.to).emit('response', {level: data.level, message: `Level ${data.level} alert delivered!`})
+  })
+  socket.on('ping', data => {
+    socket.broadcast.to(data.from).emit('ping', data)
+  })
+  socket.on('acknowledged', data => {
+    data.message = 'Alert has been acknowledged.'
+    socket.broadcast.to(data.from).emit('acknowledged', data)
   })
 })
 
