@@ -8,13 +8,28 @@ let sendTimout
 const btns = document.querySelectorAll('.alert-btn')
 btns.length > 0 && btns.forEach(btn => {
     btn.addEventListener('click', event => {
+        const click = document.getElementById('sndClick')
+        click.currentTime = .15
+        click.play()
         msgTimeout && clearTimeout(msgTimeout)
         sendTimout = window.setTimeout(() => {
-            showMessage('Sending...', 4000)
+            showMessage('Sending...', 3000)
         }, 1000)
         const level = parseInt(btn.getAttribute('data-level'))
         socket.emit('message', {level: level, id: socket.id})
         msgTimeout = window.setTimeout(() => {
+            // Plays error sound twice
+            const errSnd = document.getElementById('sndError')
+            played = 0
+            errSnd.currentTime = 0;
+            errSnd.play()
+            errSnd.addEventListener('ended', () => {
+                if(played > 0) return
+                errSnd.currentTime = 0
+                errSnd.play()
+                played++
+            })
+            // Sends error message
             showMessage('Server time out. Alert not received!', 20000)
         }, 5000)
     })
@@ -84,6 +99,9 @@ let rep
 socket.on('response', data => {
     timeout && clearInterval(timeout)
     sendTimout && clearTimeout(sendTimout)
+    const sccsSnd = document.getElementById('sndSccs')
+    sccsSnd.currentTime = 0
+    sccsSnd.play()
     rep && clearTimeout(rep)
     clearTimeout(msgTimeout)
     btns.forEach(btn => {
@@ -112,7 +130,9 @@ function showResponse(data) {
 socket.on('acknowledged', data => {
     clearTimeout(msgTimeout)
     timeout && clearInterval(timeout)
-    const message = document.getElementById('homeMessage')
+    const sound = document.getElementById('sndAckn')
+    sound.currentTime = 0
+    sound.play()
     showMessage(data.message, 20000)
 
     btns.forEach(btn => {
