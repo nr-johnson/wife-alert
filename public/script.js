@@ -3,17 +3,18 @@ const socket = io('https://staging.nrjohnson.net', {
 })
 
 let msgTimeout
-
+let sendTimout
 // Adds event listeners and functions to all buttons on home page.
 const btns = document.querySelectorAll('.alert-btn')
 btns.length > 0 && btns.forEach(btn => {
     btn.addEventListener('click', event => {
         msgTimeout && clearTimeout(msgTimeout)
-        showMessage('Sending...', 5000)
+        sendTimout = window.setTimeout(() => {
+            showMessage('Sending...', 4000)
+        }, 1000)
         const level = parseInt(btn.getAttribute('data-level'))
         socket.emit('message', {level: level, id: socket.id})
         msgTimeout = window.setTimeout(() => {
-            const message = document.getElementById('homeMessage')
             showMessage('Server time out. Alert not received!', 20000)
         }, 5000)
     })
@@ -82,6 +83,7 @@ socket.on('alert', data => {
 let rep
 socket.on('response', data => {
     timeout && clearInterval(timeout)
+    sendTimout && clearTimeout(sendTimout)
     rep && clearTimeout(rep)
     clearTimeout(msgTimeout)
     btns.forEach(btn => {
