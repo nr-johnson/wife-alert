@@ -268,6 +268,44 @@ h1 {
     text-shadow: 0 0 3px black;
     border-top: 1px solid #aaaaaa50;
 }
+.btn .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 63%;
+    width: 63%;
+    border-radius: 50%;
+    background: linear-gradient(90deg, transparent 50%, #1b1bab50 50%);
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s;
+}
+.btn .loader::after {
+    content: "";
+    display: block;
+    position: relative;
+    height: 90%;
+    width: 90%;
+    border-radius: 50%;
+    top: 5%;
+    left: 5%;
+    background-color: #aaa;
+}
+.btn.loading .loader {
+    animation-name: loading;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    opacity: 1;
+    transition: .25s;
+    transition-delay: 1s;
+}
+@keyframes loading {
+    from {transform: translate(-50%, -50%) rotate(0);}
+    to {transform: translate(-50%, -50%) rotate(360deg);}
+}
 .btn span:active {
     transform: translate(-50%, -50%) scale(.95);
     box-shadow: 0 0 4px black, inset 0 2px 1px #9d9d9d75, inset 0 -2px 1px #00000075;
@@ -292,26 +330,26 @@ h1 {
     transform: translate(-50%, -50%);
 }
 
-.btn-low span {
-    background-color: #136904d5;
+.btn-low span, .btn-low .loader::after {
+    background-color: #136904;
 }
 .btn-low span::after {
     content: "1";
 }
-.btn-mid  span {
-    background-color: #a8a801d5;
+.btn-mid span, .btn-mid .loader::after {
+    background-color: #a8a801;
 }
 .btn-mid span::after {
     content: "2";
 }
-.btn-high  span {
-    background-color: #c17d00d5;
+.btn-high span, .btn-high .loader::after {
+    background-color: #c17d00;
 }
 .btn-high span::after {
     content: "3";
 }
-.btn-urg span {
-    background-color: red;
+.btn-urg span, .btn-urg .loader::after {
+    background-color: #b91818;
 }
 .btn-urg span::after {
     content: "!";
@@ -520,8 +558,24 @@ h1 {
 }
 
 @media (max-width: 360px) {
+    #buttonsCont {
+        top: calc(50% + 1.5rem);
+    }
 	.btn {
-		width: 40vw;
-        height: 40vw;
+		width: 35vw;
+        height: 35vw;
+        margin: 3vw 30vw;
 	}
+    .btn::before {
+        height: 30vw;
+        width: 30vw;
+    }
+    .btn span {
+        height: 25vw;
+        width: 25vw;
+    }
+    .btn span::before {
+        height: 20vw;
+        width: 20vw;
+    }
 }

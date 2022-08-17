@@ -9,11 +9,13 @@ const btns = document.querySelectorAll('.alert-btn')
 btns.length > 0 && btns.forEach(btn => {
     btn.addEventListener('click', event => {
         msgTimeout && clearTimeout(msgTimeout)
+        btn.parentNode.classList.add('loading')
         const level = parseInt(btn.getAttribute('data-level'))
         socket.emit('message', {level: level, id: socket.id})
         msgTimeout = window.setTimeout(() => {
             const message = document.getElementById('homeMessage')
             message.innerHTML = 'Server time out. Alert not received!'
+            btn.parentNode.classList.remove('loading')
         }, 5000)
     })
 })
@@ -57,16 +59,19 @@ socket.on('alert', data => {
 
         }
 
-        document.addEventListener('keypress', e => {
-            socket.emit('acknowledged', data)
-            clearInterval(ping)
-            clearInterval(soundTimeout)
-            main.classList = ''
-            sound.pause()
-            sound.currentTime = 0
-            window.removeEventListener('keypress', () => {})
-            message.innerHTML = ''
+        ['keypress', 'click'].forEach(evt => {
+            document.addEventListener(evt, () => {
+                socket.emit('acknowledged', data)
+                clearInterval(ping)
+                clearInterval(soundTimeout)
+                main.classList = ''
+                sound.pause()
+                sound.currentTime = 0
+                window.removeEventListener('keypress', () => {})
+                message.innerHTML = ''
+            })
         })
+        
 
         ping = window.setInterval(() => {
             socket.emit('ping', data)
@@ -78,6 +83,8 @@ socket.on('alert', data => {
 let timeout
 let rep
 socket.on('response', data => {
+    const button = document.getElementById('btn' + data.level)
+    button && button.classList.remove('loading')
     timeout && clearInterval(timeout)
     rep && clearTimeout(rep)
     clearTimeout(msgTimeout)
@@ -95,11 +102,11 @@ socket.on('response', data => {
 
 socket.on('ping', data => {
     clearTimeout(rep)
-    console.log('ping')
     showResponse(data)
 })
 
 function showResponse(data) {
+    if(data.level < 1) return
     document.getElementById('btn' + data.level).classList.add('alert')
     rep = window.setTimeout(() => {
         btns.forEach(btn => {

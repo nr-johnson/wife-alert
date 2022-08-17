@@ -38,7 +38,7 @@ io.on('connection', socket => {
       case 4:
         socket.broadcast.emit('alert', {level: 4, message: 'Someone is about to die!', from: data.id})
         break
-      default:
+      case 0:
         socket.broadcast.emit('alert', data)
     }
   })
