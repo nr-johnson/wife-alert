@@ -9,13 +9,12 @@ const btns = document.querySelectorAll('.alert-btn')
 btns.length > 0 && btns.forEach(btn => {
     btn.addEventListener('click', event => {
         msgTimeout && clearTimeout(msgTimeout)
-        btn.parentNode.classList.add('loading')
+        showMessage('Sending...', 5000)
         const level = parseInt(btn.getAttribute('data-level'))
         socket.emit('message', {level: level, id: socket.id})
         msgTimeout = window.setTimeout(() => {
             const message = document.getElementById('homeMessage')
-            message.innerHTML = 'Server time out. Alert not received!'
-            btn.parentNode.classList.remove('loading')
+            showMessage('Server time out. Alert not received!', 20000)
         }, 5000)
     })
 })
@@ -80,23 +79,16 @@ socket.on('alert', data => {
 })
 
 // Displays message to home page when the cave page sends the received "receipt"
-let timeout
 let rep
 socket.on('response', data => {
-    const button = document.getElementById('btn' + data.level)
-    button && button.classList.remove('loading')
     timeout && clearInterval(timeout)
     rep && clearTimeout(rep)
     clearTimeout(msgTimeout)
-    const message = document.getElementById('homeMessage')
     btns.forEach(btn => {
         btn.parentNode.classList.remove('alert')
     })
     showResponse(data)
-    message.innerHTML = data.message
-    timeout = window.setTimeout(() => {
-        document.getElementById('homeMessage').innerHTML = ''
-    }, 5000)
+    showMessage(data.message, 5000)
 })
 
 
@@ -119,15 +111,76 @@ socket.on('acknowledged', data => {
     clearTimeout(msgTimeout)
     timeout && clearInterval(timeout)
     const message = document.getElementById('homeMessage')
-    message.innerHTML = data.message
-    timeout = window.setTimeout(() => {
-        document.getElementById('homeMessage').innerHTML = ''
-    }, 20000)
+    showMessage(data.message, 20000)
 
     btns.forEach(btn => {
         btn.parentNode.classList.remove('alert')
     })
 })
+
+let history = []
+
+let timeout
+let loops
+function showMessage(text, time, his) {
+    const msg = document.getElementById('homeMessage').children[0]
+    if(!msg) return
+    clearTimeout(timeout)
+    clearTimeout(loops)
+    if(msg.innerHTML.length > 5) {
+        clearMessage(text, time)
+    } else {
+        his ? text = '> ' + text : history = [text, ...history]
+        msg.innerHTML = ''
+        let i = 0
+        function loop() {
+            if(text[i] == '') {
+                msg.innerHTML = msg.innerHTML + text[i]
+                i++
+                loop()
+            } else {
+                loops = window.setTimeout(() => {
+                    clearTimeout(loops)
+                    msg.innerHTML = msg.innerHTML + text[i]
+                    i++
+                    i < text.length ? loop() : timeout = window.setTimeout(() => {
+                        clearMessage()
+                    }, time)
+                }, 50)
+            }
+        }
+        loop()
+    }
+}
+function clearMessage(text, time) {
+    const msg = document.getElementById('homeMessage').children[0]
+    clearTimeout(timeout)
+    if(!msg || msg.innerHTML.length < 5) return
+    let i = msg.innerHTML.length
+    function loop() {
+        if(i > -1) {
+            loops = window.setTimeout(() => {
+                msg.innerHTML = msg.innerHTML.substring(0,i)
+                i--
+                loop()
+            }, 50)
+        } else {
+            clearTimeout(loops)
+            text ? showMessage(text, time)
+            : history.length > 0 ? msg.innerHTML = '<' : msg.innerHTML = ''
+        }
+    }
+    loop()
+}
+
+function toggleMessage() {
+    const msg = document.getElementById('homeMessage').children[0]
+    if(msg.innerHTML.length > 5) {
+        clearMessage()
+    } else if(history.length > 0) {
+        showMessage(history[0], 5000, true)
+    }
+}
 
 // Shows button legend on home page.
 function toggleInfo(show) {

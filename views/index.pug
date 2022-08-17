@@ -6,7 +6,9 @@ block head
 
 block content
     main#homeMain(class='container-fluid')
-        section#homeMessage(class='homeMsg')
+        section#homeMessage(class='homeMsg' onclick='toggleMessage()')
+            span
+            span 00000000000000000000000000000000000000
         aside#customForm 
             div(class='back')
             form(onsubmit="sendCustomMessage(event, this.children[0])")
