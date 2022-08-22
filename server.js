@@ -69,16 +69,14 @@ io.on('connection', socket => {
     socket.broadcast.to(data.from).emit('acknowledged', data)
   })
 
-  socket.on('checking', () => {
-    caveOn ? socket.emit('cave-on') : socket.emit('cave-off')
-  })
-
+  urlPath == 'home' && setInterval(() => {
+    caveOn ? socket.emit('cave-on') : socket.emit('off', 'cave')
+  }, 4000)
 
   socket.on('disconnect', () => {
+    console.log(`${urlPath}-off`)
     if(urlPath != 'cave') return
-    console.log('cave-off')
     caveOn = false
-    socket.emit('cave-off')
   })
 
 })

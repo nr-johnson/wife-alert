@@ -4,16 +4,24 @@ const socket = io(url, {
     withCredentials: true
 })
 
-let checkInterval
 let thinkInterval
 
-socket.on('disconnect', () => {
+socket.on(['disconnect'], path => {
     const light = document.getElementById('statusCont')
 
     if(!light) return
 
     light.classList = 'offline'
     updateThinking('Trying to connect', true)
+})
+
+socket.on('off', path => {
+    const light = document.getElementById('statusCont')
+    if(path != 'cave') return
+    if(!light) return
+
+    light.classList = 'connected'
+    updateThinking('Waiting', true)
 })
 
 socket.on('home-on', () => {
@@ -24,11 +32,7 @@ socket.on('home-on', () => {
 
     light.classList = 'connected'
 
-    updateThinking('Searching', true)
-
-    checkInterval = window.setInterval(() => {
-        socket.emit('checking', socket.id)
-    }, 1000)
+    updateThinking('Waiting', true)
 })
 
 socket.on('cave-on', () => {
@@ -39,27 +43,9 @@ socket.on('cave-on', () => {
     light ? light.classList = 'communicating' : null
 
     updateThinking('Connected', false)
-
-    clearInterval(checkInterval)
-    checkInterval = window.setInterval(() => {
-        socket.emit('checking', socket.id)
-    }, 5000)
 })
 
-socket.on('cave-off', () => {
-    console.log('cave-off')
-
-    const light = document.getElementById('statusCont')
-    clearInterval(checkInterval)
-    light.classList = 'connecting'
-
-    updateThinking('Searching', true)
-
-    checkInterval = window.setInterval(() => {
-        socket.emit('checking', socket.id)
-    }, 4000)
-})
-
+document.getElementById('statusCont') && updateThinking('Trying to connect', true)
 function updateThinking(status, thinking) {
     const update = document.getElementById('statusText')
     clearInterval(thinkInterval)
@@ -74,7 +60,7 @@ function updateThinking(status, thinking) {
             update.innerHTML = update.innerHTML + '.'
             i++
         }
-    }, 1000)
+    }, 500)
 }
 
 let msgTimeout
