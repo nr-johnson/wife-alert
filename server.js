@@ -30,9 +30,11 @@ app.get('/cave', (req, res) => {
 io.on('connection', socket => {
   let urlPath = URL.parse(socket.handshake.headers.referer).pathname
   if(urlPath == '/') {
+    console.log("Home Online")
     urlPath = 'home'
     socket.emit('home-on')
   } else if(urlPath == '/cave') {
+    console.log("Cave Online")
     urlPath = 'cave'
     socket.emit('cave-on')
     caveOn = true
@@ -75,8 +77,8 @@ io.on('connection', socket => {
 
 
   socket.on('disconnect', () => {
+    console.log(`${urlPath} offline`)
     if(urlPath != 'cave') return
-    console.log('cave-off')
     caveOn = false
     socket.emit('cave-off')
   })
