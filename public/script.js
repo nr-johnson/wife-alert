@@ -1,7 +1,5 @@
-const url = document.getElementById('url').innerHTML
-
-const socket = io(url, {
-    withCredentials: true
+const socket = io(document.getElementById('url').innerHTML, {
+	withCredentials: true
 })
 
 let thinkInterval
