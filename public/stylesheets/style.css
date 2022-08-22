@@ -214,9 +214,12 @@ h1 {
 
 #buttonsCont {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 100%;
+    left: 50%;
+    top: calc(50% + 1rem);
+    transform: translate(-50%, -50%);
     padding: 0;
+    margin: 0;
 }
 
 #emrgCont {
@@ -448,17 +451,17 @@ h1 {
     overflow: hidden;
     text-align: end;
     letter-spacing: 2px;
-    font-size: 14pt;
+    font-size: 16pt;
     line-height: 1.5;
 }
 .homeMsg span {
     position: absolute;
-    
-    top: .5rem;
-    left: .5rem;
-    width: calc(100% - 1rem);
-    height: calc(100% - 1.5rem);
-    
+    background: #222;
+    top: 0;
+    left: 0;
+    padding: .4rem;
+    width: 100%;
+    height: calc(100% - .5rem);
     overflow: hidden;
 }
 .homeMsg span:nth-child(2) {
@@ -471,7 +474,7 @@ h1 {
 	left: -2rem;
 	height: 4.5rem;
 	width: calc(100% + 4rem);
-	box-shadow: inset 0 0 12px #11111180;
+	box-shadow: inset 0 0 12px #42424280;
 }
 
 #info {
@@ -591,6 +594,70 @@ h1 {
 }
 #customForm button.cancel {
     background: red;
+}
+
+#statusCont {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2.5rem;
+    width: 3rem;
+    z-index: 1;
+    background: #555;
+    box-shadow: 0 0 2px #555;
+}
+
+#statusLight {
+    position: absolute;
+    height: 2rem;
+    width: 2rem;
+    top: .5rem;
+    left: .5rem;
+    background-color: #555;
+    border-radius: 50%;
+    box-shadow: 0 0 2px black, inset 0 1px 1px #ffffff35, inset 0 -1px 1px #00000030;
+}
+#statusLight::before {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 1.6rem;
+    width: 1.6rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    box-shadow: inset 0 0 3px #00000050;
+}
+#statusLight::after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 1.5rem;
+    width: 1.5rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background-color: #dc9e00;
+    box-shadow: inset 0 -2px 6px #00000070, inset 0 2px 6px #ffffff70, 0 0 8px #ffbb0089;
+}
+#statusCont.connected #statusLight::after {
+    background-color: #cddc00;
+    box-shadow: inset 0 -2px 6px #00000070, inset 0 2px 6px #ffffff70, 0 0 8px #fff70089;
+}
+#statusCont.communicating #statusLight::after {
+    background-color: green;
+    box-shadow: inset 0 -2px 6px #00000070, inset 0 2px 6px #ffffff70, 0 0 8px #00a60088;
+}
+#statusCont.offline #statusLight::after {
+    background-color: red;
+    box-shadow: inset 0 -2px 6px #00000070, inset 0 2px 6px #ffffff70, 0 0 8px #00a60088;
+}
+#statusText {
+    padding: .35rem 0 0 3.5rem;
+    font-size: 16pt;
+    white-space: nowrap;
 }
 
 @media (max-width: 360px) {

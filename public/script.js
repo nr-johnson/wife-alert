@@ -1,6 +1,81 @@
-const socket = io('https://staging.nrjohnson.net', {
+const url = document.getElementById('url').innerHTML
+
+const socket = io(url, {
     withCredentials: true
 })
+
+let checkInterval
+let thinkInterval
+
+socket.on('disconnect', () => {
+    const light = document.getElementById('statusCont')
+
+    if(!light) return
+
+    light.classList = 'offline'
+    updateThinking('Trying to connect', true)
+})
+
+socket.on('home-on', () => {
+    const light = document.getElementById('statusCont')
+
+    if(!light) return 
+    if(light.classList.contains('communicating')) return
+
+    light.classList = 'connected'
+
+    updateThinking('Searching', true)
+
+    checkInterval = window.setInterval(() => {
+        socket.emit('checking', socket.id)
+    }, 1000)
+})
+
+socket.on('cave-on', () => {
+    const light = document.getElementById('statusCont')
+
+    if(!light) return
+
+    light ? light.classList = 'communicating' : null
+
+    updateThinking('Connected', false)
+
+    clearInterval(checkInterval)
+    checkInterval = window.setInterval(() => {
+        socket.emit('checking', socket.id)
+    }, 5000)
+})
+
+socket.on('cave-off', () => {
+    console.log('cave-off')
+
+    const light = document.getElementById('statusCont')
+    clearInterval(checkInterval)
+    light.classList = 'connecting'
+
+    updateThinking('Searching', true)
+
+    checkInterval = window.setInterval(() => {
+        socket.emit('checking', socket.id)
+    }, 4000)
+})
+
+function updateThinking(status, thinking) {
+    const update = document.getElementById('statusText')
+    clearInterval(thinkInterval)
+    update.innerHTML = status
+    if(!thinking) return
+    let i = 0
+    thinkInterval = window.setInterval(() => {
+        if(i > 2) {
+            i = 0
+            update.innerHTML = status
+        } else {
+            update.innerHTML = update.innerHTML + '.'
+            i++
+        }
+    }, 1000)
+}
 
 let msgTimeout
 let sendTimout
@@ -74,17 +149,16 @@ socket.on('alert', data => {
 
         }
 
-        ['keypress', 'click'].forEach(evt => {
-            document.addEventListener(evt, () => {
-                socket.emit('acknowledged', data)
-                clearInterval(ping)
-                clearInterval(soundTimeout)
-                main.classList = ''
-                sound.pause()
-                sound.currentTime = 0
-                window.removeEventListener('keypress', () => {})
-                message.innerHTML = ''
-            })
+        
+        document.addEventListener('keypress', () => {
+            socket.emit('acknowledged', data)
+            clearInterval(ping)
+            clearInterval(soundTimeout)
+            main.classList = ''
+            sound.pause()
+            sound.currentTime = 0
+            window.removeEventListener('keypress', () => {})
+            message.innerHTML = ''
         })
         
 

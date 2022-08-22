@@ -1,28 +1,43 @@
+require('dotenv').config()
+
 const express = require('express')
 const path = require('path')
 const app = express()
 const server= require('http').createServer(app)
+const URL = require('url')
 const io = require('socket.io')(server, {
   cors: { origin: "*" }
 })
 
-let users= []
+let caveOn = false
 
 app.set('view engine', 'pug')
 
 app.use(express.static(path.join(__dirname, '/public')))
 
 app.get('/', (req, res) => {
-  res.render('index')
+  res.render('index', {
+    url: process.env.URL
+  })
 })
 
 app.get('/cave', (req, res) => {
-  res.render('cave')
+  res.render('cave', {
+    url: process.env.URL
+  })
 })
 
 io.on('connection', socket => {
-  users.push(socket.id)
-  console.log(`User with id: ${socket.id}`)
+  let urlPath = URL.parse(socket.handshake.headers.referer).pathname
+  if(urlPath == '/') {
+    urlPath = 'home'
+    socket.emit('home-on')
+  } else if(urlPath == '/cave') {
+    urlPath = 'cave'
+    socket.emit('cave-on')
+    caveOn = true
+  }
+  
 
   socket.on("message", data => {
     switch (data.level) {
@@ -53,7 +68,22 @@ io.on('connection', socket => {
     data.message = 'Alert has been acknowledged.'
     socket.broadcast.to(data.from).emit('acknowledged', data)
   })
+
+  socket.on('checking', () => {
+    caveOn ? socket.emit('cave-on') : socket.emit('cave-off')
+  })
+
+
+  socket.on('disconnect', () => {
+    if(urlPath != 'cave') return
+    console.log('cave-off')
+    caveOn = false
+    socket.emit('cave-off')
+  })
+
 })
+
+
 
 const PORT = process.env.PORT || 8500
 
