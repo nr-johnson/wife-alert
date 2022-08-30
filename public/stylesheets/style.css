@@ -1,15 +1,12 @@
-@font-face {
-    font-family: 'Clock';
-    src: url('/fonts/SFDigitalReadout-Medium.ttf');
-}
-
 body {
     background-color: #444;
     color: white;
-    font-family: 'Clock', 'Georgia', serif;
 }
 h1 {
     text-align: center;
+}
+svg {
+    vertical-align: top;
 }
 
 /* CAVE */
@@ -181,27 +178,71 @@ h1 {
     100% {box-shadow: inset 0 0 3vh #00000080;}
 }
 
-#message {
-    position: absolute;
+#messageCont {
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 100vw;
-    height: 15vh;
+    height: 25vh;
     border-radius: 2px;
     box-shadow: 0 0 1vh black;
     font-size: 4vh;
-    padding: 4.5vh;
+    padding: 1rem;
+    margin: 0;
+    font-family: 'Veranda';
+    color: #ffffff70;
+    background-color: #000000;
+    
 }
-#message::after {
+#message {
+    padding: 0;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    z-index: 1;
+}
+/* #message::after {
     content: "";
     position: absolute;
     display: block;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: calc(15vh - 1.5rem);
-    width: calc(100vw - 1.5rem);
-    box-shadow: inset 0 0 2vh #00000050;
+    top: 1rem;
+    left: -4rem;
+    right: -4rem;
+    bottom: -4rem;
+    background-color: #00000090;
+    box-shadow: inset 0 4px 4px #555;
+} */
+#message li {
+    list-style: none;
+    position: relative;
+}
+#message li::before {
+    content: '\003E';
+    margin: 0 1rem;
+    font-size: 3vh;
+}
+#message .emph {
+    color: white;
+}
+#message .err {
+    color: red;
+}
+#message .lvl0 {
+    color:#1919db;
+}
+#message .lvl1, #message .great {
+    color:green;
+}
+#message .lvl2 {
+    color:yellow;
+}
+#message .lvl3 {
+    color:orange;
+}
+#message .lvl4, #message li.err {
+    color:red;
 }
 
 /* ^^^ CAVE */
@@ -263,7 +304,7 @@ h1 {
     border-bottom: 1px solid #777;
 }
 .btn::after {
-    content: "0";
+    content: "";
     position: absolute;
     padding-top: 8px;
     top: 50%;
@@ -420,23 +461,92 @@ h1 {
 
 #customBtnCont {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    padding: 1rem;
+    bottom: .5rem;
+    left: .5rem;
     z-index: 1;
+    margin: 0;
 }
 #infoBtnCont {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: .5rem;
+    right: .5rem;
     padding: 1rem;
     z-index: 1;
 }
 .customBtn, .infoBtn {
-    height: 2rem;
-    width: 2rem;
+    height: 1.25rem;
+    width: 1.25rem;
+    z-index: 1;
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+.infoBtn {
+    top: 50%;
+}
+
+#customBtnCont, #infoBtnCont {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    background: #555;
+    box-shadow: 0 0 2px black;
+}
+#customBtnCont::after, #infoBtnCont::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 3.5rem;
+    width: 3.5rem;
+    box-shadow: 0 -3px 4px #aaaaaa30, 0 3px 4px #444, inset 0 3px 3px #444, inset 0 -3px 3px #aaaaaa30;
+    border-radius: 50%;
     cursor: pointer;
+}
+.small-btn {
+    position: absolute;
+    height: 3rem;
+    width: 3rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #0026cf;
+    box-shadow: 0 0 3px black;
+}
+#infoBtnCont .small-btn {
+    background-color: #5f5f5f;
+}
+#customBtnCont:active .small-btn, #infoBtnCont:active .small-btn {
+    transform: translate(-50%, -50%) scale(.9);
+    box-shadow: 0 0 1px black;
     
+}
+.small-btn::after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 2.25rem;
+    width: 2.25rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    box-shadow: inset 0 -3px 3px #aaaaaa50, inset 0 3px 3px #00000020, 0 2px 4px #00000020, 0 -2px 4px #aaaaaa50;
+}
+#customBtnCont.alert .small-btn {
+    animation-name: custAlert;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+@keyframes custAlert {
+    0% {box-shadow: 0 0 3px black, 0 0 12px blue;}
+    50% {box-shadow: 0 0 3px black;}
+    100% {box-shadow: 0 0 3px black, 0 0 12px blue;}
 }
 
 
@@ -451,7 +561,7 @@ h1 {
     overflow: hidden;
     text-align: end;
     letter-spacing: 2px;
-    font-size: 16pt;
+    font-size: 14pt;
     line-height: 1.5;
 }
 .homeMsg span {
@@ -611,8 +721,8 @@ h1 {
     position: absolute;
     height: 2rem;
     width: 2rem;
-    top: .5rem;
-    left: .5rem;
+    top: .4rem;
+    left: .4rem;
     background-color: #555;
     border-radius: 50%;
     box-shadow: 0 0 2px black, inset 0 1px 1px #ffffff35, inset 0 -1px 1px #00000030;
@@ -655,12 +765,17 @@ h1 {
     box-shadow: inset 0 -2px 6px #00000070, inset 0 2px 6px #ffffff70, 0 0 8px #00a60088;
 }
 #statusText {
-    padding: .35rem 0 0 3.5rem;
-    font-size: 16pt;
+    padding: .45rem 0 0 3.5rem;
+    font-size: 12pt;
     white-space: nowrap;
 }
 
-@media (max-width: 360px) {
+/* Portrait View */
+@media (max-width: 400px) {
+    .homeMsg {
+        font-size: 11pt;
+        line-height: 2;
+    }
     #buttonsCont {
         top: calc(50% + 1.5rem);
     }
@@ -680,5 +795,8 @@ h1 {
     .btn span::before {
         height: 20vw;
         width: 20vw;
+    }
+    #statusText {
+        display: none;
     }
 }

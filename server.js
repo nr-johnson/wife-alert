@@ -9,7 +9,10 @@ const io = require('socket.io')(server, {
   cors: { origin: "*" }
 })
 
-let caveOn = false
+let caveSockets = []
+let homeSockets = []
+let cCheckIntv
+let hCheckIntv
 
 app.set('view engine', 'pug')
 
@@ -32,12 +35,25 @@ io.on('connection', socket => {
   if(urlPath == '/') {
     console.log("Home Online")
     urlPath = 'home'
-    socket.emit('home-on')
+    socket.emit('home-on', caveSockets.length)
+    
+    homeSockets.push(socket)
+
+    clearInterval(cCheckIntv)
+    cCheckIntv = setInterval(() => {
+      caveSockets.length > 0 ? socket.emit('cave-on') : socket.emit('off', 'cave')
+    }, 4000)
   } else if(urlPath == '/cave') {
     console.log("Cave Online")
     urlPath = 'cave'
-    socket.emit('cave-on')
-    caveOn = true
+    socket.emit('cave-on', homeSockets.length)
+
+    caveSockets.push(socket)
+    
+    clearInterval(hCheckIntv)
+    hCheckIntv = setInterval(() => {
+      homeSockets.length > 0 ? socket.emit('home-on') : socket.emit('off', 'home')
+    }, 4000)
   }
   
 
@@ -67,23 +83,33 @@ io.on('connection', socket => {
     socket.broadcast.to(data.from).emit('ping', data)
   })
   socket.on('acknowledged', data => {
+    console.log('ack')
     data.message = 'Alert has been acknowledged.'
-    socket.broadcast.to(data.from).emit('acknowledged', data)
+    socket.broadcast.emit('acknowledged', data)
   })
-
-  urlPath == 'home' && setInterval(() => {
-    caveOn ? socket.emit('cave-on') : socket.emit('off', 'cave')
-  }, 4000)
+  socket.on('cancel', data => {
+    socket.broadcast.emit('cancel', data)
+  })
+  socket.on('canceled', () => {
+    socket.broadcast.emit('canceled')
+  })
 
   socket.on('disconnect', () => {
     console.log(`${urlPath}-off`)
-    if(urlPath != 'cave') return
-    caveOn = false
+    if(urlPath == 'cave') {
+      const i = caveSockets.indexOf(socket)
+      caveSockets.splice(i,1)
+      if(homeSockets[0]) caveSockets.length <= 0 && homeSockets[0].emit('off', 'cave')
+      
+    } else if(urlPath == 'home') {
+      const i = homeSockets.indexOf(socket)
+      homeSockets.splice(i,1)
+      homeSockets.length <= 0 && caveSockets[0].emit('off', 'home')
+    }
+    
   })
 
 })
-
-
 
 const PORT = process.env.PORT || 8500
 

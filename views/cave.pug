@@ -1,14 +1,20 @@
 extends layout.pug 
 
-block head 
+block head
+    script(defer src='/scripts/caveScript.js' type='text/javascript')
     title Cave        
 
 block content
     main#cave
         div#light
             div
-        div#message
-
+        
+        section#statusCont(class='')
+            div#statusLight
+    div#messageCont
+        ul#message
+    
+    audio(src='/sounds/better/click.mp3')
     audio#snd0(class='alert-sound' src="/sounds/cstm.wav") 
     audio#snd1(class='alert-sound' src="/sounds/low.wav")
     audio#snd2(class='alert-sound' src="/sounds/mid.wav")
