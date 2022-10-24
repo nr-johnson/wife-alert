@@ -19,15 +19,11 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, '/public')))
 
 app.get('/', (req, res) => {
-  res.render('index', {
-    url: process.env.URL
-  })
+  res.render('index')
 })
 
 app.get('/cave', (req, res) => {
-  res.render('cave', {
-    url: process.env.URL
-  })
+  res.render('cave')
 })
 
 io.on('connection', socket => {
